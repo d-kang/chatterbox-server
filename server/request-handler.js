@@ -12,6 +12,10 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 
+var results = [];
+
+
+
 exports.requestHandler = function(request, response) {
 
   // debugger;
@@ -35,6 +39,8 @@ exports.requestHandler = function(request, response) {
   // The outgoing status.
   var statusCode = 200;
 
+  console.log('get', {request})
+  console.log('get', {response})
 
   if (request.method === 'POST') {
     var data = {
@@ -42,13 +48,26 @@ exports.requestHandler = function(request, response) {
       method: 'POST',
 
     };
+    console.log('request.url', request.url)
+    var result = {
+      username: 'Jono',
+      message: 'Do my bidding!'
+    };
+    results.push(result);
+
     // console.log('data', JSON.stringify(data));
-    console.log({request})
-    console.log({response})
+    console.log('post', {request})
+    console.log('post', {response})
     // console.log('request._postData', request._postData);
 
     statusCode = 201;
   }
+
+console.log('OUTSIDE request.url', request.url)
+  if (request.url !== '/classes/messages') {
+    statusCode = 404;
+  }
+
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
 
@@ -57,10 +76,12 @@ exports.requestHandler = function(request, response) {
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
   headers['Content-Type'] = 'text/plain';
-  headers['success'] = {
-    username: 'Jono',
-    message: 'Do my bidding!'
-  };
+
+
+
+
+
+
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
@@ -73,7 +94,7 @@ exports.requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end(JSON.stringify({results: []}));
+  response.end(JSON.stringify({results: results}));
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
