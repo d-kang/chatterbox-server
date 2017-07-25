@@ -43,12 +43,12 @@ exports.requestHandler = function(request, response) {
   console.log('get', {response})
 
   if (request.method === 'POST') {
+    console.log('_postData', request._postData)
     var data = {
       from: 'request.method',
       method: 'POST',
 
     };
-    console.log('request.url', request.url)
     var result = {
       username: 'Jono',
       message: 'Do my bidding!'
@@ -59,11 +59,9 @@ exports.requestHandler = function(request, response) {
     console.log('post', {request})
     console.log('post', {response})
     // console.log('request._postData', request._postData);
-
     statusCode = 201;
   }
 
-console.log('OUTSIDE request.url', request.url)
   if (request.url !== '/classes/messages') {
     statusCode = 404;
   }
