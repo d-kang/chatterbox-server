@@ -11,13 +11,34 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
+// request.on(‘data’, function(){
+//   var body =''
+//   body += request;
+//
+// }).on('end')
+// var fs = require('fs');
+//
+
+
+// serve static files
+// exports.handle_incoming_request(req, res) {
+//   if (req.method === 'GET' && req.url.substring(0, 9) === '/somecontent/') {
+//     serve_static_file(req.url.substing(9), res);
+//   } else {
+//     res.writeHead(404, {"Content-Type": "application/json"})
+//   }
+//
+// }
+
+
 
 var results = [];
-
-
-
 exports.requestHandler = function(request, response) {
-
+  // fs.readFile('client/index.html', function(err, data) {
+  //   response.writeHead(200, {'Content-Type': 'text/html'});
+  //   response.write(data);
+  //   response.end(JSON.stringify({results: results}));
+  // }).listen(1137);
   // debugger;
 
   // Request and Response come from node's http module.
@@ -43,26 +64,46 @@ exports.requestHandler = function(request, response) {
   console.log('get', {response})
 
   if (request.method === 'POST') {
-    console.log('_postData', request._postData)
-    var data = {
-      from: 'request.method',
-      method: 'POST',
+    var body = [];
 
-    };
-    var result = {
-      username: 'Jono',
-      message: 'Do my bidding!'
-    };
-    results.push(result);
+    request.on('data', function(chunk) {
 
-    // console.log('data', JSON.stringify(data));
+      console.log('Testing what chunk is', chunk);
+      body.push(chunk);
+    }).on('end', () => {
+      console.log({Buffer, body});
+      console.log('body.toString', body.toString());
+
+      console.log('Hi, this is on end');
+      body = Buffer.concat(body).toString();
+      results.push(JSON.parse(body));
+
+
+      console.log('testing what body is ', body);
+      response.end();
+      // at this point, `body` has the entire request body stored in it as a string
+    });
+
+
+
+    // var data = {
+    //   from: 'request.method',
+    //   method: 'POST',
+    // };
+    // var result = {
+    //   username: 'Jono',
+    //   message: 'Do my bidding!'
+    // };
+    // results.push(result);
+
+
     console.log('post', {request})
     console.log('post', {response})
-    // console.log('request._postData', request._postData);
+    console.log(results)
     statusCode = 201;
   }
 
-  if (request.url !== '/classes/messages') {
+  else if (request.url !== '/classes/messages') {
     statusCode = 404;
   }
 
